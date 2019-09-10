@@ -24,6 +24,7 @@
 
 
 import bluetooth
+import binascii
 
 from adapt.intent import IntentBuilder
 
