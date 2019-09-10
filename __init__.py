@@ -20,29 +20,23 @@ from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill
 from mycroft.util.log import getLogger
 
-__author__ = 'eward'
+__author__ = 'HerrAugust'
 
 LOGGER = getLogger(__name__)
 
 
-class HelloWorldSkill(MycroftSkill):
+class SmartLampSkill(MycroftSkill):
     def __init__(self):
-        super(HelloWorldSkill, self).__init__(name="HelloWorldSkill")
+        super(SmartLampSkill, self).__init__(name="SmartLampSkill")
 
     def initialize(self):
-        thank_you_intent = IntentBuilder("ThankYouIntent"). \
-            require("ThankYouKeyword").build()
-        self.register_intent(thank_you_intent, self.handle_thank_you_intent)
+        turn_on_lamp_intent = IntentBuilder("TurnOnLampIntent"). \
+            require("TurnOnLampKeyword").build()
+        self.register_intent(turn_on_lamp_intent, self.handle_turn_on_lamp_intent)
 
-        how_are_you_intent = IntentBuilder("HowAreYouIntent"). \
-            require("HowAreYouKeyword").build()
-        self.register_intent(how_are_you_intent,
-                             self.handle_how_are_you_intent)
-
-        hello_world_intent = IntentBuilder("HelloWorldIntent"). \
-            require("HelloWorldKeyword").build()
-        self.register_intent(hello_world_intent,
-                             self.handle_hello_world_intent)
+        turn_off_lamp_intent = IntentBuilder("TurnOffLampIntent"). \
+            require("TurnOffLampKeyword").build()
+        self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
 
     def handle_thank_you_intent(self, message):
         self.speak_dialog("welcome")
