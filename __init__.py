@@ -15,6 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Mycroft Core.  If not, see <http://www.gnu.org/licenses/>.
 
+
+
+# Credits to https://github.com/pfalcon/Chsmartbulb-led-bulb-speaker
+# for showing how to use a bluetooth log from Android app in order to
+# prepare a script and find out in a simple way the strings to be sent
+# to the smart lamp to make it work
+
+
+import bluetooth
+
 from adapt.intent import IntentBuilder
 
 from mycroft.skills.core import MycroftSkill
@@ -26,31 +36,73 @@ LOGGER = getLogger(__name__)
 
 
 class SmartLampSkill(MycroftSkill):
-    def __init__(self):
-        super(SmartLampSkill, self).__init__(name="SmartLampSkill")
+	def __init__(self):
+		super(SmartLampSkill, self).__init__(name="SmartLampSkill")
 
-    def initialize(self):
-        turn_on_lamp_intent = IntentBuilder("TurnOnLampIntent"). \
-            require("TurnOnLampKeyword").build()
-        self.register_intent(turn_on_lamp_intent, self.handle_turn_on_lamp_intent)
+	def initialize(self):
+		turn_on_lamp_intent = IntentBuilder("TurnOnLampIntent"). \
+			require("TurnOnLampKeyword").build()
+		self.register_intent(turn_on_lamp_intent, self.handle_turn_on_lamp_intent)
 
-        turn_off_lamp_intent = IntentBuilder("TurnOffLampIntent"). \
-            require("TurnOffLampKeyword").build()
-        self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
+		turn_off_lamp_intent = IntentBuilder("TurnOffLampIntent"). \
+			require("TurnOffLampKeyword").build()
+		self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
 
-    def handle_turn_on_lamp_intent(self, message):
-        self.speak_dialog("wait")
+		make_blue_intent = IntentBuilder("MakeBlueIntent"). \
+			require("MakeBlueKeyword").build()
+		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
 
-        self.speak_dialog("done")
 
-    def handle_turn_off_lamp_intent(self, message):
-        self.speak_dialog("wait")
+		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
+		self.port = 1
+		self.open_bluetooth_connection()
 
-        self.speak_dialog("done")
+	def open_bluetooth_connection(self):
+		self.s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)  # RFCOMM is client-server protocol (client asks services and server replies), similar to TCP/IP
+		self.s.connect((self.serverMACAddress, self.port))
 
-    def stop(self):
-        pass
+	def close_bluetooth_connection(self):
+		self.handle_turn_off_lamp_intent('')
+		self.s.close()
+
+	def handle_turn_on_lamp_intent(self, message):
+		self.speak_dialog("wait")
+
+		self.s.send(h('01fe0000538310000000000050ff0000'))
+
+		self.speak_dialog("done")
+
+	def handle_make_red_intent(self, message):
+		self.speak_dialog("wait")
+
+		self.s.send(h('01fe0000538310000000ff0050000000'))
+
+		self.speak_dialog("done")
+
+	def handle_make_green_intent(self, message):
+		self.speak_dialog("wait")
+
+		self.s.send(h('01fe000053831000ff00000050000000'))
+
+		self.speak_dialog("done")
+
+	def handle_make_blue_intent(self, message):
+		self.speak_dialog("wait")
+
+		self.s.send(h('01fe00005383100000ff000050000000'))
+
+		self.speak_dialog("done")
+
+	def handle_turn_off_lamp_intent(self, message):
+		self.speak_dialog("wait")
+
+		self.s.send(h('01fe0000538310000000000050000000'))
+
+		self.speak_dialog("done")
+
+	def stop(self):
+		self.close_bluetooth_connection()
 
 
 def create_skill():
-    return SmartLampSkill()
+	return SmartLampSkill()
