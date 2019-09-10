@@ -73,38 +73,41 @@ class SmartLampSkill(MycroftSkill):
 		self.handle_turn_off_lamp_intent('')
 		self.s.close()
 
+	def h(self, v):
+    	return binascii.unhexlify(v)
+
 	def handle_turn_on_lamp_intent(self, message):
 		self.speak_dialog("wait")
 
-		self.s.send(h('01fe0000538310000000000050ff0000'))
+		self.s.send(self.h('01fe0000538310000000000050ff0000'))
 
 		self.speak_dialog("done")
 
 	def handle_make_red_intent(self, message):
 		self.speak_dialog("wait")
 
-		self.s.send(h('01fe0000538310000000ff0050000000'))
+		self.s.send(self.h('01fe0000538310000000ff0050000000'))
 
 		self.speak_dialog("done")
 
 	def handle_make_green_intent(self, message):
 		self.speak_dialog("wait")
 
-		self.s.send(h('01fe000053831000ff00000050000000'))
+		self.s.send(self.h('01fe000053831000ff00000050000000'))
 
 		self.speak_dialog("done")
 
 	def handle_make_blue_intent(self, message):
 		self.speak_dialog("wait")
 
-		self.s.send(h('01fe00005383100000ff000050000000'))
+		self.s.send(self.h('01fe00005383100000ff000050000000'))
 
 		self.speak_dialog("done")
 
 	def handle_turn_off_lamp_intent(self, message):
 		self.speak_dialog("wait")
 
-		self.s.send(h('01fe0000538310000000000050000000'))
+		self.s.send(self.h('01fe0000538310000000000050000000'))
 
 		self.speak_dialog("done")
 
