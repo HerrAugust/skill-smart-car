@@ -48,6 +48,14 @@ class SmartLampSkill(MycroftSkill):
 			require("TurnOffLampKeyword").build()
 		self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
 
+		make_red_intent = IntentBuilder("MakeRedIntent"). \
+			require("MakeRedKeyword").build()
+		self.register_intent(make_red_intent, self.handle_make_red_intent)
+
+		make_green_intent = IntentBuilder("MakeGreenIntent"). \
+			require("MakeGreenKeyword").build()
+		self.register_intent(make_green_intent, self.handle_make_green_intent)
+
 		make_blue_intent = IntentBuilder("MakeBlueIntent"). \
 			require("MakeBlueKeyword").build()
 		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
