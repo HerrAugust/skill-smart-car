@@ -38,18 +38,19 @@ class SmartLampSkill(MycroftSkill):
             require("TurnOffLampKeyword").build()
         self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
 
-    def handle_thank_you_intent(self, message):
-        self.speak_dialog("welcome")
+    def handle_turn_on_lamp_intent(self, message):
+        self.speak_dialog("wait")
 
-    def handle_how_are_you_intent(self, message):
-        self.speak_dialog("how.are.you")
+        self.speak_dialog("done")
 
-    def handle_hello_world_intent(self, message):
-        self.speak_dialog("hello.world")
+    def handle_turn_off_lamp_intent(self, message):
+        self.speak_dialog("wait")
+
+        self.speak_dialog("done")
 
     def stop(self):
         pass
 
 
 def create_skill():
-    return HelloWorldSkill()
+    return SmartLampSkill()
