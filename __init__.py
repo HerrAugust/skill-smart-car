@@ -62,13 +62,31 @@ class SmartLampSkill(MycroftSkill):
 		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
 
 
-		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
-		self.port = 1
+		# self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
+		# self.port = 1
 		self.open_bluetooth_connection()
 
 	def open_bluetooth_connection(self):
+		print("No BT address specified. Searching all nearby bluetooth devices for")
+		print("the SPP service, which Chsmartbulb uses. (May take some time.)")
+		
+		# SPP
+		uuid = "00001101-0000-1000-8000-00805F9B34FB"
+		service_matches = find_service(uuid=uuid, address=addr)
+
+		if len(service_matches) == 0:
+			print("couldn't find the service")
+			sys.exit(1)
+
+		first_match = service_matches[0]
+		self.port = first_match["port"]
+		self.name = first_match["name"]
+		self.host = first_match["host"]
+
+		print("connecting to \"%s\" on %s" % (name, host))  # e.g., "connecting to "Serial Port Service - Channel 2" on F4:4E:FD:D3:E5:EE"
+
 		self.s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)  # RFCOMM is client-server protocol (client asks services and server replies), similar to TCP/IP
-		self.s.connect((self.serverMACAddress, self.port))
+		self.s.connect((self.host, self.port))
 
 	def close_bluetooth_connection(self):
 		self.handle_turn_off_lamp_intent('')
