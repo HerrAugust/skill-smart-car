@@ -74,7 +74,7 @@ class SmartLampSkill(MycroftSkill):
 		self.s.close()
 
 	def h(self, v):
-    	return binascii.unhexlify(v)
+		return binascii.unhexlify(v)
 
 	def handle_turn_on_lamp_intent(self, message):
 		self.speak_dialog("wait")
