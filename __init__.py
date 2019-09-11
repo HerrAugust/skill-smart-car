@@ -61,16 +61,17 @@ class SmartLampSkill(MycroftSkill):
 			require("MakeBlueKeyword").build()
 		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
 
+		get_color_intent = IntentBuilder("GetColorIntent"). \
+			require("GetColorKeyword").build()
+		self.register_intent(get_color_intent, self.handle_get_color_intent)
+
 
 		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
 		# self.port = 1
 		self.open_bluetooth_connection()
 
 	def open_bluetooth_connection(self):
-		print("No BT address specified. Searching all nearby bluetooth devices for")
-		print("the SPP service, which Chsmartbulb uses. (May take some time.)")
-		
-		# SPP
+		# Bluetooth SPP, which Chsmartbulb uses
 		uuid = "00001101-0000-1000-8000-00805F9B34FB"
 		service_matches = bluetooth.find_service(uuid=uuid, address=self.serverMACAddress)
 
@@ -102,6 +103,25 @@ class SmartLampSkill(MycroftSkill):
 
 	def h(self, v):
 		return binascii.unhexlify(v)
+
+	def get_color(self, colorhex):
+		color = 'off'
+		if colorhex == '01fe0000418210000000000000ff0000':
+			color = 'white'
+		elif colorhex == '01fe0000418210000000ff0000000000':
+			color = 'red'
+		elif colorhex == '01fe000041821000ff00000000000000':
+			color = 'green'
+		elif colorhex == '01fe00004182100000ff000000000000':
+			color = 'blue'
+		elif colorhex == '01fe0000418210000000000000000000':
+			color = 'off'
+		return color
+
+	def handle_get_color_intent(self, message):
+		self.send_via_bluetooth('01fe0000518210000000000000000000')
+		r = sock.recv(16)
+		self.speak_dialog(get_color(binascii.hexlify(r)))
 
 	def handle_turn_on_lamp_intent(self, message):
 		# self.speak_dialog("wait")
