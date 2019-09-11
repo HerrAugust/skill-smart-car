@@ -83,7 +83,7 @@ class SmartLampSkill(MycroftSkill):
 		self.name = first_match["name"]
 		self.host = first_match["host"]
 
-		print("connecting to \"%s\" on %s" % (name, host))  # e.g., "connecting to "Serial Port Service - Channel 2" on F4:4E:FD:D3:E5:EE"
+		print("connecting to \"%s\" on %s" % (self.name, self.host))  # e.g., "connecting to "Serial Port Service - Channel 2" on F4:4E:FD:D3:E5:EE"
 
 		self.s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)  # RFCOMM is client-server protocol (client asks services and server replies), similar to TCP/IP
 		self.s.connect((self.host, self.port))
