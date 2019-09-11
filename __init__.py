@@ -24,7 +24,7 @@
 
 
 import bluetooth
-import binascii
+import binascii, sys
 
 from adapt.intent import IntentBuilder
 
@@ -62,7 +62,7 @@ class SmartLampSkill(MycroftSkill):
 		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
 
 
-		# self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
+		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
 		# self.port = 1
 		self.open_bluetooth_connection()
 
@@ -72,7 +72,7 @@ class SmartLampSkill(MycroftSkill):
 		
 		# SPP
 		uuid = "00001101-0000-1000-8000-00805F9B34FB"
-		service_matches = find_service(uuid=uuid, address=addr)
+		service_matches = bluetooth.find_service(uuid=uuid, address=self.serverMACAddress)
 
 		if len(service_matches) == 0:
 			print("couldn't find the service")
