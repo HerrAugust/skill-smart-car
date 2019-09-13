@@ -125,8 +125,8 @@ class SmartLampSkill(MycroftSkill):
 		r = self.s.recv(16)
 		print("message received:")
 		print(binascii.hexlify(r))
-		print(get_color(binascii.hexlify(r)))
-		self.speak_dialog(get_color(binascii.hexlify(r)))
+		print(self.get_color(binascii.hexlify(r)))
+		self.speak_dialog(self.get_color(binascii.hexlify(r)))
 
 	def handle_turn_on_lamp_intent(self, message):
 		# self.speak_dialog("wait")
