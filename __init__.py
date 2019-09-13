@@ -106,15 +106,15 @@ class SmartLampSkill(MycroftSkill):
 
 	def get_color(self, colorhex):
 		color = 'off'
-		if '01fe0000418210000000000000ff0000' in colorhex:
+		if colorhex.find('01fe0000418210000000000000ff0000') != -1:
 			color = 'white'
-		elif '01fe0000418210000000ff0000000000' in colorhex:
+		elif colorhex.find('01fe0000418210000000ff0000000000') != -1:
 			color = 'red'
-		elif '01fe000041821000ff00000000000000' in colorhex:
+		elif colorhex.find('01fe000041821000ff00000000000000') != -1:
 			color = 'green'
-		elif '01fe00004182100000ff000000000000' in colorhex:
+		elif colorhex.find('01fe00004182100000ff000000000000') != -1:
 			color = 'blue'
-		elif '01fe0000418210000000000000000000' in colorhex:
+		elif colorhex.find('01fe0000418210000000000000000000') != -1:
 			color = 'off'
 		return color
 
