@@ -106,15 +106,15 @@ class SmartLampSkill(MycroftSkill):
 
 	def get_color(self, colorhex):
 		color = 'off'
-		if colorhex == '01fe0000418210000000000000ff0000':
+		if '01fe0000418210000000000000ff0000' in colorhex:
 			color = 'white'
-		elif colorhex == '01fe0000418210000000ff0000000000':
+		elif '01fe0000418210000000ff0000000000' in colorhex:
 			color = 'red'
-		elif colorhex == '01fe000041821000ff00000000000000':
+		elif '01fe000041821000ff00000000000000' in colorhex:
 			color = 'green'
-		elif colorhex == '01fe00004182100000ff000000000000':
+		elif '01fe00004182100000ff000000000000' in colorhex:
 			color = 'blue'
-		elif colorhex == '01fe0000418210000000000000000000':
+		elif '01fe0000418210000000000000000000' in colorhex:
 			color = 'off'
 		return color
 
@@ -124,7 +124,9 @@ class SmartLampSkill(MycroftSkill):
 		print("sent message")
 		r = self.s.recv(16)
 		print("message received:")
-		print(binascii.hexlify(r))
+		r = binascii.hexlify(r)
+		print(r)
+
 		print(self.get_color(binascii.hexlify(r)))
 		self.speak_dialog(self.get_color(binascii.hexlify(r)))
 
