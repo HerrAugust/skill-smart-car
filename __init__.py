@@ -120,7 +120,7 @@ class SmartLampSkill(MycroftSkill):
 
 	def handle_get_color_intent(self, message):
 		self.send_via_bluetooth('01fe0000518210000000000000000000')
-		r = sock.recv(16)
+		r = self.s.recv(16)
 		self.speak_dialog(get_color(binascii.hexlify(r)))
 
 	def handle_turn_on_lamp_intent(self, message):
