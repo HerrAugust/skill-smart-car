@@ -105,6 +105,7 @@ class SmartLampSkill(MycroftSkill):
 		return binascii.unhexlify(v)
 
 	def get_color(self, colorhex):
+		colorhex = colorhex.decode("utf-8")
 		color = 'off'
 		if colorhex.find('01fe0000418210000000000000ff0000') != -1:
 			color = 'white'
