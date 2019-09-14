@@ -67,7 +67,6 @@ class SmartLampSkill(MycroftSkill):
 
 
 		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
-		# self.port = 1
 		self.open_bluetooth_connection()
 
 	def open_bluetooth_connection(self):
@@ -105,7 +104,6 @@ class SmartLampSkill(MycroftSkill):
 		return binascii.unhexlify(v)
 
 	def get_color(self, colorhex):
-		colorhex = colorhex.decode("utf-8")
 		color = 'off'
 		if colorhex.find('01fe0000418210000000000000ff0000') != -1:
 			color = 'white'
@@ -120,16 +118,15 @@ class SmartLampSkill(MycroftSkill):
 		return color
 
 	def handle_get_color_intent(self, message):
-		print("handle_get_color_intent()")
 		self.send_via_bluetooth('01fe0000518210000000000000000000')
-		print("sent message")
 		r = self.s.recv(16)
 		print("message received:")
 		r = binascii.hexlify(r)
-		print(r)
+		r = r.decode("utf-8")
+		r = self.get_color(r)
 
-		print(self.get_color(binascii.hexlify(r)))
-		self.speak_dialog(self.get_color(binascii.hexlify(r)))
+		print(r)
+		self.speak_dialog(r)
 
 	def handle_turn_on_lamp_intent(self, message):
 		# self.speak_dialog("wait")
