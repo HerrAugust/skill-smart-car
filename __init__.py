@@ -16,14 +16,9 @@
 # along with Mycroft Core.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-# Credits to https://github.com/pfalcon/Chsmartbulb-led-bulb-speaker
-# for showing how to use a bluetooth log from Android app in order to
-# prepare a script and find out in a simple way the strings to be sent
-# to the smart lamp to make it work
-
-
-import sys
+import sys, datetime
+from time import sleep
+import bluetooth
 
 from adapt.intent import IntentBuilder
 
@@ -41,7 +36,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 
 	def initialize(self):
 		turn_left_intent = IntentBuilder("TurnLeftIntent"). \
-			require("TurnLeftLampKeyword").build()
+			require("TurnLeftKeyword").build()
 		self.register_intent(turn_left_intent, self.handle_turn_left_intent)
 
 		turn_right_intent = IntentBuilder("TurnRightIntent"). \
@@ -56,37 +51,33 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 			require("GoBackKeyword").build()
 		self.register_intent(go_back_intent, self.handle_go_back_intent)
 
+		stop_intent = IntentBuilder("StopIntent"). \
+			require("StopKeyword").build()
+		self.register_intent(stop_intent, self.handle_stop_intent)
+
+		self.bluetoothModuleMACAddress = '80:C3:C2:54:52:9B'
+		self.port = 1
 
 		self.open_connection_with_car()
 
 	def open_connection_with_car(self):
+		print( "Before to use the Smart Car skill, remember to pair  \
+				computer and HC-06 Arduino module. No need to connect them manually!" )
+
 		# Bluetooth SPP, which the HC-06 (or simular) Arduino bluetooth module uses
-		uuid = "00001101-0000-1000-8000-00805F9B34FB"
-		service_matches = bluetooth.find_service(uuid=uuid, address=self.serverMACAddress)
-
-		if len(service_matches) == 0:
-			print("couldn't find the service")
-			sys.exit(1)
-
-		first_match = service_matches[0]
-		self.port = first_match["port"]
-		self.name = first_match["name"]
-		self.host = first_match["host"]
-
-		print("connecting to \"%s\" on %s" % (self.name, self.host))  # e.g., "connecting to "Serial Port Service - Channel 2" on F4:4E:FD:D3:E5:EE"
-
 		self.s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)  # RFCOMM is client-server protocol (client asks services and server replies), similar to TCP/IP
-		self.s.connect((self.host, self.port))
+		self.s.connect((self.bluetoothModuleMACAddress, self.port))
+
+		print( "At this point, the HC-06 blinking blue led gets stable blue, i.e. connected" )
 
 	def close_bluetooth_connection(self):
-		self.handle_turn_off_lamp_intent('')
 		self.s.close()
 
 	def send_via_bluetooth(self, string):
 		try:
 			self.s.send(self.h(string))
 		except bluetooth.btcommon.BluetoothError:
-			print("BluetoothError, trying to reconnect to smart lamp")
+			print("BluetoothError, trying to reconnect to smart car")
 			self.open_connection_with_car()
 			self.send_via_bluetooth(string)
 
@@ -94,31 +85,115 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 		return binascii.unhexlify(v)
 
 	def handle_go_ahead_intent(self, message):
-		self.send_via_bluetooth('8')
+		init = datetime.datetime.now()
+		while True:
+			self.goAhead()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 1:
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
 
-		print("go ahead done")
 		self.speak_dialog("done")
 
 	def handle_go_back_intent(self, message):
-		self.send_via_bluetooth('2')
+		init = datetime.datetime.now()
+		while True:
+			self.goBack()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 1:
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
 
-		print("go back done")
 		self.speak_dialog("done")
 
 	def handle_turn_left_intent(self, message):
-		self.send_via_bluetooth('4')
+		# go back for 0.2 ms
+		init = datetime.datetime.now()
+		while True:
+			self.goBack()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 0.2: # 200 ms
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
 
-		print("turn left done")
+		# then left
+		init = datetime.datetime.now()
+		while True:
+			self.turnLeft()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 0.1:  # 100 ms
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
+
 		self.speak_dialog("done")
 
 	def handle_turn_right_intent(self, message):
-		self.send_via_bluetooth('6')
+		# go back for 0.2 ms
+		init = datetime.datetime.now()
+		while True:
+			self.goBack()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 0.2: # 200 ms
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
 
-		print("turn right done")
+		# then right
+		init = datetime.datetime.now()
+		while True:
+			self.turnLeft()
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 0.1:  # 100 ms
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
+
 		self.speak_dialog("done")
 
+	def handle_stop_intent(self, message):
+		self.stop()
+		self.speak_dialog("stop")
+
+
+	########### low level functions
+
+	def goAhead(self):
+		print("go ahead")
+		self.send_via_bluetooth('8')
+
+	def goBack(self):
+		print("go back")
+		self.send_via_bluetooth('2')
+
+	def turnLeft(self):
+		print("turn left")
+		self.send_via_bluetooth('4')
+
+	def turnRight(self):
+		print("turn right")
+		self.send_via_bluetooth('6')
+
 	def stop(self):
-		self.close_bluetooth_connection()
+		print("stop")
+		init = datetime.datetime.now()
+		while True:
+			self.send_via_bluetooth('5')
+			delta = datetime.datetime.now() - init
+			sec = delta.seconds
+			if sec >= 0.4:  # 400 ms
+				self.stop()
+				break
+			sleep(0.1) # 100 ms
 
 
 def create_skill():
