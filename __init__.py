@@ -23,8 +23,7 @@
 # to the smart lamp to make it work
 
 
-import bluetooth
-import binascii, sys
+import sys
 
 from adapt.intent import IntentBuilder
 
@@ -36,41 +35,32 @@ __author__ = 'HerrAugust'
 LOGGER = getLogger(__name__)
 
 
-class SmartLampSkill(MycroftSkill):
+class HerrAugustSmartCarSkill(MycroftSkill):
 	def __init__(self):
-		super(SmartLampSkill, self).__init__(name="SmartLampSkill")
+		super(HerrAugustSmartCarSkill, self).__init__(name="HerrAugustSmartCarSkill")
 
 	def initialize(self):
-		turn_on_lamp_intent = IntentBuilder("TurnOnLampIntent"). \
-			require("TurnOnLampKeyword").build()
-		self.register_intent(turn_on_lamp_intent, self.handle_turn_on_lamp_intent)
+		turn_left_intent = IntentBuilder("TurnLeftIntent"). \
+			require("TurnLeftLampKeyword").build()
+		self.register_intent(turn_left_intent, self.handle_turn_left_intent)
 
-		turn_off_lamp_intent = IntentBuilder("TurnOffLampIntent"). \
-			require("TurnOffLampKeyword").build()
-		self.register_intent(turn_off_lamp_intent, self.handle_turn_off_lamp_intent)
+		turn_right_intent = IntentBuilder("TurnRightIntent"). \
+			require("TurnRightKeyword").build()
+		self.register_intent(turn_right_intent, self.handle_turn_left_intent)
 
-		make_red_intent = IntentBuilder("MakeRedIntent"). \
-			require("MakeRedKeyword").build()
-		self.register_intent(make_red_intent, self.handle_make_red_intent)
+		go_ahead_intent = IntentBuilder("GoAheadIntent"). \
+			require("GoAheadKeyword").build()
+		self.register_intent(go_ahead_intent, self.handle_go_ahead_intent)
 
-		make_green_intent = IntentBuilder("MakeGreenIntent"). \
-			require("MakeGreenKeyword").build()
-		self.register_intent(make_green_intent, self.handle_make_green_intent)
-
-		make_blue_intent = IntentBuilder("MakeBlueIntent"). \
-			require("MakeBlueKeyword").build()
-		self.register_intent(make_blue_intent, self.handle_make_blue_intent)
-
-		get_color_intent = IntentBuilder("GetColorIntent"). \
-			require("GetColorKeyword").build()
-		self.register_intent(get_color_intent, self.handle_get_color_intent)
+		go_back_intent = IntentBuilder("GoBackIntent"). \
+			require("GoBackKeyword").build()
+		self.register_intent(go_back_intent, self.handle_go_back_intent)
 
 
-		self.serverMACAddress = 'F4:4E:FD:D3:E5:EE'  # MAC of bluetooth device. You'll need to change it
-		self.open_bluetooth_connection()
+		self.open_connection_with_car()
 
-	def open_bluetooth_connection(self):
-		# Bluetooth SPP, which Chsmartbulb uses
+	def open_connection_with_car(self):
+		# Bluetooth SPP, which the HC-06 (or simular) Arduino bluetooth module uses
 		uuid = "00001101-0000-1000-8000-00805F9B34FB"
 		service_matches = bluetooth.find_service(uuid=uuid, address=self.serverMACAddress)
 
@@ -97,57 +87,34 @@ class SmartLampSkill(MycroftSkill):
 			self.s.send(self.h(string))
 		except bluetooth.btcommon.BluetoothError:
 			print("BluetoothError, trying to reconnect to smart lamp")
-			self.open_bluetooth_connection()
+			self.open_connection_with_car()
 			self.send_via_bluetooth(string)
 
 	def h(self, v):
 		return binascii.unhexlify(v)
 
-	def get_color(self, colorhex):
-		color = 'off'
-		if colorhex.find('01fe0000418210000000000000ff0000') != -1:
-			color = 'white'
-		elif colorhex.find('01fe0000418210000000ff0000000000') != -1:
-			color = 'red'
-		elif colorhex.find('01fe000041821000ff00000000000000') != -1:
-			color = 'green'
-		elif colorhex.find('01fe00004182100000ff000000000000') != -1:
-			color = 'blue'
-		elif colorhex.find('01fe0000418210000000000000000000') != -1:
-			color = 'off'
-		return color
+	def handle_go_ahead_intent(self, message):
+		self.send_via_bluetooth('8')
 
-	def handle_get_color_intent(self, message):
-		self.send_via_bluetooth('01fe0000518210000000000000000000')
-		r = self.s.recv(16)
-		print("message received:")
-		r = binascii.hexlify(r)
-		r = r.decode("utf-8")
-		r = self.get_color(r)
-
-		print(r)
-		self.speak_dialog(r)
-
-	def handle_turn_on_lamp_intent(self, message):
-		# self.speak_dialog("wait")
-
-		self.send_via_bluetooth('01fe0000538310000000000050ff0000')
+		print("go ahead done")
 		self.speak_dialog("done")
 
-	def handle_make_red_intent(self, message):
-		self.send_via_bluetooth('01fe0000538310000000ff0050000000')
+	def handle_go_back_intent(self, message):
+		self.send_via_bluetooth('2')
+
+		print("go back done")
 		self.speak_dialog("done")
 
-	def handle_make_green_intent(self, message):
-		self.send_via_bluetooth('01fe000053831000ff00000050000000')
+	def handle_turn_left_intent(self, message):
+		self.send_via_bluetooth('4')
+
+		print("turn left done")
 		self.speak_dialog("done")
 
-	def handle_make_blue_intent(self, message):
-		self.send_via_bluetooth('01fe00005383100000ff000050000000')
-		self.speak_dialog("done")
+	def handle_turn_right_intent(self, message):
+		self.send_via_bluetooth('6')
 
-	def handle_turn_off_lamp_intent(self, message):
-		self.send_via_bluetooth('01fe0000538310000000000050000000')
+		print("turn right done")
 		self.speak_dialog("done")
 
 	def stop(self):
@@ -155,4 +122,4 @@ class SmartLampSkill(MycroftSkill):
 
 
 def create_skill():
-	return SmartLampSkill()
+	return HerrAugustSmartCarSkill()
