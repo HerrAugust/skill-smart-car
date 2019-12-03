@@ -16,9 +16,8 @@
 # along with Mycroft Core.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys, datetime
+import bluetooth, binascii, sys, datetime
 from time import sleep
-import bluetooth
 
 from adapt.intent import IntentBuilder
 
@@ -41,7 +40,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 
 		turn_right_intent = IntentBuilder("TurnRightIntent"). \
 			require("TurnRightKeyword").build()
-		self.register_intent(turn_right_intent, self.handle_turn_left_intent)
+		self.register_intent(turn_right_intent, self.handle_turn_right_intent)
 
 		go_ahead_intent = IntentBuilder("GoAheadIntent"). \
 			require("GoAheadKeyword").build()
@@ -59,6 +58,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 		self.port = 1
 
 		self.open_connection_with_car()
+		self.stop()
 
 	def open_connection_with_car(self):
 		print( "Before to use the Smart Car skill, remember to pair  \
@@ -75,14 +75,11 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 
 	def send_via_bluetooth(self, string):
 		try:
-			self.s.send(self.h(string))
+			self.s.send(string)
 		except bluetooth.btcommon.BluetoothError:
 			print("BluetoothError, trying to reconnect to smart car")
 			self.open_connection_with_car()
 			self.send_via_bluetooth(string)
-
-	def h(self, v):
-		return binascii.unhexlify(v)
 
 	def handle_go_ahead_intent(self, message):
 		init = datetime.datetime.now()
@@ -90,7 +87,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 			self.goAhead()
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
-			if sec >= 1:
+			if sec >= 0.5:  # 500 ms
 				self.stop()
 				break
 			sleep(0.1) # 100 ms
@@ -103,7 +100,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 			self.goBack()
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
-			if sec >= 1:
+			if sec >= 0.5:  # 500 ms
 				self.stop()
 				break
 			sleep(0.1) # 100 ms
@@ -111,24 +108,13 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 		self.speak_dialog("done")
 
 	def handle_turn_left_intent(self, message):
-		# go back for 0.2 ms
-		init = datetime.datetime.now()
-		while True:
-			self.goBack()
-			delta = datetime.datetime.now() - init
-			sec = delta.seconds
-			if sec >= 0.2: # 200 ms
-				self.stop()
-				break
-			sleep(0.1) # 100 ms
-
 		# then left
 		init = datetime.datetime.now()
 		while True:
 			self.turnLeft()
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
-			if sec >= 0.1:  # 100 ms
+			if sec >= 0.5:  # 500 ms
 				self.stop()
 				break
 			sleep(0.1) # 100 ms
@@ -136,24 +122,13 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 		self.speak_dialog("done")
 
 	def handle_turn_right_intent(self, message):
-		# go back for 0.2 ms
-		init = datetime.datetime.now()
-		while True:
-			self.goBack()
-			delta = datetime.datetime.now() - init
-			sec = delta.seconds
-			if sec >= 0.2: # 200 ms
-				self.stop()
-				break
-			sleep(0.1) # 100 ms
-
 		# then right
 		init = datetime.datetime.now()
 		while True:
-			self.turnLeft()
+			self.turnRight()
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
-			if sec >= 0.1:  # 100 ms
+			if sec >= 0.5:  # 500 ms
 				self.stop()
 				break
 			sleep(0.1) # 100 ms
@@ -191,7 +166,6 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
 			if sec >= 0.4:  # 400 ms
-				self.stop()
 				break
 			sleep(0.1) # 100 ms
 
