@@ -1,21 +1,18 @@
-# <img src='https://raw.githack.com/FortAwesome/Font-Awesome/master/svgs/solid/smile.svg' card_color='#22a7f0' width='50' height='50' style='vertical-align:bottom'/> Chsmartbulb for Mycroft
-Mycroft skill to control a Chsmartbulb via voice commands.
-Chsmartbulb is a bluetooth smart lamp that you can buy at https://www.amazon.it/Lunvon-Lampadina-Altoparlante-Intelligente-Multicolore/dp/B07D7THZS5/ref=sr_1_1?__mk_it_IT=%C3%85M%C3%85%C5%BD%C3%95%C3%91&keywords=chsmartbulb&qid=1568228030&s=gateway&sr=8-1 (12 Euros).
-The skill allows to turn the light on and off, change color and get its status (color, turned on?).
+# Real-time smart-car skill Mycroft
+This is a Mycroft skill to control a smart-car via voice commands.
 
-## About 
-Mycroft skill to control a Chsmartbulb via voice commands.
-Chsmartbulb is a bluetooth smart lamp.
-The skill allows to turn the light on and off, change color and get its status (color, turned on?).
+Accepted commands are:
+* go ahead
+* go back
+* turn left
+* turn right
 
-## Examples 
-* "Turn the light on"
-* "Turn the light off"
-* "Red light"
-* "Lamp status"
+It has been tested under ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/). 
+
+<img src="screens/preview1.jpg" alt="screen 1 not available" />
 
 ## Installation
-Turn Mycroft on. Pair the smartbulb with Mycroft/Linux with
+Turn Mycroft on. Pair the HC-06 Arduino module with Mycroft/Linux using:
 
 	hcitool scan  # to get the MAC address of your device
 	bluetoothctl
@@ -31,25 +28,23 @@ Then, install the required packages and the skill
 
 	sudo apt-get install bluetooth libbluetooth-dev bluez-tools
 	sudo pip install pybluez
-	mycroft-msm install https://github.com/HerrAugust/skill-smart-lamp.git/
-	mycroft-cli-test
+	cd /opt/mycroft/skills/
+	git clone https://github.com/HerrAugust/skill-smart-car
+	cd ~/mycroft/
+	./stop-mycroft
+	./start-mycroft debug
 
 Of course, you need to register a Mycroft account.
-Tested in Picroft Stable 2019-07-20 (https://github.com/MycroftAI/enclosure-picroft/) on Raspberry Pi 3B+ (September 2019), connected to microphone via external sound card and speaker via jack 3.5mm.
+Tested in Mycroft commit `c2904335f6f415fcaa246b5ac9ca7b8cdea3dbad` on Elementary OS 5 (November 2019) on a laptop with built-in microphone and speaker + bluetooth dongle. Funduino Uno and HC-06 bluetooth module have been used (RXD pin connected to digital pin 1; TXD pin connected to digital pin 0). Funduino Uno has been mounted on Shield Bot v1.2 (http://wiki.seeedstudio.com/Shield_Bot_V1.2/).
 
 ## Credits 
 HerrAugust @ github.com
-
-Credits to https://github.com/pfalcon/Chsmartbulb-led-bulb-speaker
-for showing how to use a bluetooth log from Android app in order to
-prepare a script and find out in a simple way the strings to be sent
-to the smart lamp to make it work.
+www.mascitti.info
 
 ## Category
 **IoT**
 
 ## Tags
 #iot
-#smartbulb
-#chsmartbulb
+#smart-car
 #mycroft
