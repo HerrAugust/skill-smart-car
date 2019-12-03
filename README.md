@@ -7,7 +7,7 @@ Accepted commands are:
 * turn left
 * turn right
 
-It has been tested under ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/). 
+It has been tested under ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/). ARTe is a real-time extension for Arduino, which lets you write periodic tasks in a very simple way. 
 
 <img src="screens/preview1.jpg" alt="screen 1 not available" />
 
@@ -35,11 +35,20 @@ Then, install the required packages and the skill
 	./start-mycroft debug
 
 Of course, you need to register a Mycroft account.
-Tested in Mycroft commit `c2904335f6f415fcaa246b5ac9ca7b8cdea3dbad` on Elementary OS 5 (November 2019) on a laptop with built-in microphone and speaker + bluetooth dongle. Funduino Uno and HC-06 bluetooth module have been used (RXD pin connected to digital pin 1; TXD pin connected to digital pin 0). Funduino Uno has been mounted on Shield Bot v1.2 (http://wiki.seeedstudio.com/Shield_Bot_V1.2/).
+
+## Testing environment
+Laptop:
+
+Tested in Mycroft commit `c2904335f6f415fcaa246b5ac9ca7b8cdea3dbad` on Elementary OS 5 (November 2019) on a laptop with built-in microphone and speaker + bluetooth dongle. 
+
+Arduino Uno:
+
+Funduino Uno and HC-06 bluetooth module have been used (RXD pin connected to digital pin 1; TXD pin connected to digital pin 0). Funduino Uno has been mounted on Shield Bot v1.2 (http://wiki.seeedstudio.com/Shield_Bot_V1.2/). 
+
+ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/) has been used. It is a real-time extension for Arduino, which lets you write periodic tasks in a very simple way. 
 
 ## Credits 
 HerrAugust @ github.com
-www.mascitti.info
 
 ## Category
 **IoT**
