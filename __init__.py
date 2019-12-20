@@ -54,7 +54,7 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 			require("StopKeyword").build()
 		self.register_intent(stop_intent, self.handle_stop_intent)
 
-		self.bluetoothModuleMACAddress = '80:C3:C2:54:52:9B'
+		self.bluetoothModuleMACAddress = '80:C3:C2:54:52:9B'  # you need to modify this
 		self.port = 1
 
 		self.open_connection_with_car()
@@ -144,25 +144,25 @@ class HerrAugustSmartCarSkill(MycroftSkill):
 
 	def goAhead(self):
 		print("go ahead")
-		self.send_via_bluetooth('8')
+		self.send_via_bluetooth('goa')
 
 	def goBack(self):
 		print("go back")
-		self.send_via_bluetooth('2')
+		self.send_via_bluetooth('gob')
 
 	def turnLeft(self):
 		print("turn left")
-		self.send_via_bluetooth('4')
+		self.send_via_bluetooth('tlf')
 
 	def turnRight(self):
 		print("turn right")
-		self.send_via_bluetooth('6')
+		self.send_via_bluetooth('trg')
 
 	def stop(self):
 		print("stop")
 		init = datetime.datetime.now()
 		while True:
-			self.send_via_bluetooth('5')
+			self.send_via_bluetooth('stp')
 			delta = datetime.datetime.now() - init
 			sec = delta.seconds
 			if sec >= 0.4:  # 400 ms

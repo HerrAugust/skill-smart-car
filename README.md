@@ -1,13 +1,14 @@
 # Real-time smart-car skill Mycroft
 This is a Mycroft skill to control a smart-car via voice commands.
 
-Accepted commands are:
+Accepted vocal commands are:
 * go ahead
 * go back
 * turn left
 * turn right
+* stop
 
-It has been tested under ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/). ARTe is a real-time extension for Arduino, which lets you write periodic tasks in a very simple way. 
+It has been tested under ARTe 1.6.11-r3 (http://arte.retis.santannapisa.it/). ARTe is a **real-time extension for Arduino**, which lets you write **periodic tasks** in a very simple way. 
 
 <img src="screens/preview1.jpg" alt="screen 1 not available" />
 
